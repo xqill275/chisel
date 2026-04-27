@@ -9,6 +9,7 @@
  * @mainpage Chisel Engine
  *
  * A lightweight, code-only 2D game engine written in C++17.
+ * No editor, no UI — just a clean library you link against and build with.
  *
  * ## Getting Started
  *
@@ -29,14 +30,18 @@
  *
  *     while (!window.shouldClose()) {
  *         window.pollEvents();
- *         // your game logic here
+ *
+ *         if (chisel::Input::isKeyPressed(chisel::Key::Escape))
+ *             break;
  *     }
  * }
  * @endcode
  *
  * ## Modules
  * - **chisel::Window** — native desktop window (v0.1)
+ * - **chisel::Input**  — keyboard and mouse input (v0.2)
  */
 
 #include "chisel/window.h"
+#include "chisel/input.h"
 

@@ -1,11 +1,12 @@
 #include "chisel/window.h"
+#include "chisel/input.h"
 
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 
 namespace chisel {
 
-// IMPL definition
+// IMPL definition 
 
 struct Window::Impl {
     GLFWwindow* handle = nullptr;
@@ -31,9 +32,26 @@ struct Window::Impl {
 
         glfwSetWindowUserPointer(handle, this);
 
+        // Input callbacks 
+
+        glfwSetKeyCallback(handle,
+            [](GLFWwindow*, int key, int /*scancode*/, int action, int /*mods*/) {
+                Input::onKey(key, action);
+            });
+
+        glfwSetMouseButtonCallback(handle,
+            [](GLFWwindow*, int button, int action, int /*mods*/) {
+                Input::onMouseButton(button, action);
+            });
+
+        glfwSetCursorPosCallback(handle,
+            [](GLFWwindow*, double x, double y) {
+                Input::onMouseMove(x, y);
+            });
+
         glfwSetFramebufferSizeCallback(handle,
             [](GLFWwindow*, int, int) {
-                // TODO: Will forward to user callbacks in a later chapter
+                // Will forward to user callbacks in a later chapter
             });
 
         glfwShowWindow(handle);
@@ -47,7 +65,7 @@ struct Window::Impl {
     }
 };
 
-// Window API
+//  Window public API 
 
 Window::Window(const WindowConfig& cfg)
     : m_impl(new Impl(cfg))
@@ -77,11 +95,12 @@ bool Window::shouldClose() const {
 }
 
 void Window::pollEvents() {
+    Input::endFrame();           // clear single-frame state from last frame
     glfwWaitEventsTimeout(0.016);
 }
 
 void Window::swapBuffers() {
-    // TODO!: No-op until a graphics context is attached
+    // No-op until a graphics context is attached
 }
 
 void Window::run(const std::function<bool()>& onFrame) {
