@@ -1,16 +1,11 @@
 # Chisel
 
-A lightweight, code-only 2D game engine written in C++17. No editor, no UI — just a clean library you link against and build with. Chisel is the spiritual successor to TextSmith, built for 2D games.
+A lightweight, code-only 2D game engine written in C++17.
 
 ---
 
-## Philosophy
 
-Most engines come with an editor, a launcher, a project wizard, and a hundred settings you never touch. Chisel doesn't. You write code, you link the library, you ship a game. That's it.
-
----
-
-## Current Capabilities
+## Current Capabilities — v0.1
 
 - **Window management** — create and configure a native desktop window with a single call
 - **Cross-platform** — builds on Linux, macOS, and Windows from the same codebase
@@ -53,33 +48,41 @@ Most engines come with an editor, a launcher, a project wizard, and a hundred se
 
 ---
 
-## Building
+## Dependencies
 
-Chisel uses CMake and fetches its own dependencies — minimal setup required.
+Chisel requires GLFW to be installed on your system before building.
+
+```bash
+# Ubuntu / WSL
+sudo apt install libglfw3-dev
+
+# macOS
+brew install glfw
+
+# Windows (via vcpkg)
+vcpkg install glfw3
+```
+
+---
+
+## Building
 
 ### Requirements
 
 - CMake 3.22+
 - A C++17 compiler (GCC, Clang, or MSVC)
 - Git
+- GLFW (see above)
 
 ### Linux / WSL (Ubuntu)
-
-Install the system libraries GLFW needs:
-
-```bash
-sudo apt install libx11-dev libxrandr-dev libxinerama-dev \
-                 libxcursor-dev libxi-dev libgl1-mesa-dev
-```
 
 > **WSL note:** run `echo $DISPLAY` to confirm your display server is working. On Windows 11, WSLg handles this automatically. On Windows 10 you will need VcXsrv or a similar X server and `export DISPLAY=:0`.
 
 ```bash
 git clone https://github.com/you/chisel.git
 cd chisel
-mkdir build && cd build
-cmake ..
-cmake --build .
+cmake -S . -B build
+cmake --build build
 ```
 
 ### macOS
@@ -89,28 +92,26 @@ xcode-select --install
 
 git clone https://github.com/you/chisel.git
 cd chisel
-mkdir build && cd build
-cmake ..
-cmake --build .
+cmake -S . -B build
+cmake --build build
 ```
 
 ### Windows
 
-Open a Developer Command Prompt for Visual Studio, or use MinGW. No extra dependencies needed.
+Open a Developer Command Prompt for Visual Studio, or use MinGW.
 
 ```bash
 git clone https://github.com/you/chisel.git
 cd chisel
-mkdir build && cd build
-cmake ..
-cmake --build . --config Release
+cmake -S . -B build
+cmake --build build --config Release
 ```
 
 ---
 
 ## Usage
 
-Add Chisel to your CMakeLists.txt:
+Add Chisel to your `CMakeLists.txt`:
 
 ```cmake
 add_executable(my_game main.cpp)
@@ -141,35 +142,22 @@ int main() {
 
 ## Examples
 
-Examples are built automatically alongside the library. After building, run them from the build directory:
+Examples are built automatically alongside the library. After building, run them from the project root:
 
 ```bash
 # Linux / macOS / WSL
-./examples/hello_window/hello_window
+./build/examples/hello_window/hello_window
 
 # Windows
-examples\hello_window\Release\hello_window.exe
+build\examples\hello_window\Release\hello_window.exe
 ```
 
 To skip building examples:
 
 ```bash
-cmake .. -DCHISEL_BUILD_EXAMPLES=OFF
+cmake -S . -B build -DCHISEL_BUILD_EXAMPLES=OFF
 ```
 
 ---
 
-## Project Structure
 
-```
-chisel/
-├── include/
-│   └── chisel/
-│       ├── chisel.h      # the only header you need to include
-│       └── window.h
-├── src/
-│   └── window.cpp
-├── examples/
-│   └── hello_window/
-└── CMakeLists.txt
-```
