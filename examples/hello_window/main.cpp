@@ -1,5 +1,4 @@
 #include <chisel/chisel.h>
-#include <cstdio>
 
 int main() {
     chisel::WindowConfig cfg;
@@ -7,31 +6,39 @@ int main() {
     cfg.height = 720;
     cfg.title  = "My Game";
 
-    chisel::Window window(cfg);
+    chisel::Window   window(cfg);
+    chisel::Renderer renderer(cfg.width, cfg.height);
+    chisel::Camera   camera(cfg.width, cfg.height);
+    chisel::Texture  texture("assets/sprites/player.png");
+
+    float x = 100.0f, y = 100.0f;
 
     while (!window.shouldClose()) {
         window.pollEvents();
 
-        // Close on Escape
         if (chisel::Input::isKeyPressed(chisel::Key::Escape))
             break;
 
-        // Print mouse position when left button is held
-        if (chisel::Input::isMouseButtonDown(chisel::MouseButton::Left)) {
-            double x, y;
-            chisel::Input::mousePosition(x, y);
-            printf("mouse: %.0f, %.0f\n", x, y);
-        }
+        // Move sprite with WASD
+        if (chisel::Input::isKeyDown(chisel::Key::D)) x += 2.0f;
+        if (chisel::Input::isKeyDown(chisel::Key::A)) x -= 2.0f;
+        if (chisel::Input::isKeyDown(chisel::Key::S)) y += 2.0f;
+        if (chisel::Input::isKeyDown(chisel::Key::W)) y -= 2.0f;
 
-        // Print a message on spacebar press (only fires once per press)
-        if (chisel::Input::isKeyPressed(chisel::Key::Space))
-            printf("space pressed!\n");
+        // Pan camera with arrow keys
+        if (chisel::Input::isKeyDown(chisel::Key::Right)) camera.move( 2.0f,  0.0f);
+        if (chisel::Input::isKeyDown(chisel::Key::Left))  camera.move(-2.0f,  0.0f);
+        if (chisel::Input::isKeyDown(chisel::Key::Down))  camera.move( 0.0f,  2.0f);
+        if (chisel::Input::isKeyDown(chisel::Key::Up))    camera.move( 0.0f, -2.0f);
 
-        if (chisel::Input::isKeyDown(chisel::Key::A))
-            printf("a \n");
+        // Zoom with Q and E
+        if (chisel::Input::isKeyDown(chisel::Key::E)) camera.zoomBy(1.01f);
+        if (chisel::Input::isKeyDown(chisel::Key::Q)) camera.zoomBy(0.99f);
 
-        if (chisel::Input::isMouseButtonPressed(chisel::MouseButton::Middle)) {
-            printf("middle button pressed \n");
-        }
+        renderer.begin(camera);
+        renderer.drawSprite(texture, x, y, 64.0f, 64.0f);
+        renderer.end();
+
+        window.swapBuffers();
     }
 }

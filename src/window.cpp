@@ -1,12 +1,13 @@
 #include "chisel/window.h"
 #include "chisel/input.h"
 
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 
 namespace chisel {
 
-// IMPL definition 
+// ── PIMPL definition ──────────────────────────────────────────────────────────
 
 struct Window::Impl {
     GLFWwindow* handle = nullptr;
@@ -15,8 +16,14 @@ struct Window::Impl {
         if (!glfwInit())
             throw std::runtime_error("chisel: failed to initialise GLFW");
 
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        glfwWindowHint(GLFW_RESIZABLE,  cfg.resizable ? GLFW_TRUE : GLFW_FALSE);
+        // Request OpenGL 3.3 core context
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // required on macOS
+#endif
+        glfwWindowHint(GLFW_RESIZABLE, cfg.resizable ? GLFW_TRUE : GLFW_FALSE);
 
         handle = glfwCreateWindow(
             cfg.width, cfg.height,
@@ -30,9 +37,24 @@ struct Window::Impl {
             throw std::runtime_error("chisel: failed to create window");
         }
 
+        glfwMakeContextCurrent(handle);
+
+        // Initialise glad — must happen after context is current
+        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+            throw std::runtime_error("chisel: failed to initialise glad");
+
+        // Vsync
+        glfwSwapInterval(cfg.vsync ? 1 : 0);
+
         glfwSetWindowUserPointer(handle, this);
 
-        // Input callbacks 
+        // Viewport tracks framebuffer size
+        glfwSetFramebufferSizeCallback(handle,
+            [](GLFWwindow*, int width, int height) {
+                glViewport(0, 0, width, height);
+            });
+
+        // ── Input callbacks ───────────────────────────────────────────────────
 
         glfwSetKeyCallback(handle,
             [](GLFWwindow*, int key, int /*scancode*/, int action, int /*mods*/) {
@@ -49,11 +71,6 @@ struct Window::Impl {
                 Input::onMouseMove(x, y);
             });
 
-        glfwSetFramebufferSizeCallback(handle,
-            [](GLFWwindow*, int, int) {
-                // Will forward to user callbacks in a later chapter
-            });
-
         glfwShowWindow(handle);
         glfwFocusWindow(handle);
     }
@@ -65,7 +82,7 @@ struct Window::Impl {
     }
 };
 
-//  Window public API 
+// ── Window public API ─────────────────────────────────────────────────────────
 
 Window::Window(const WindowConfig& cfg)
     : m_impl(new Impl(cfg))
@@ -95,12 +112,12 @@ bool Window::shouldClose() const {
 }
 
 void Window::pollEvents() {
-    Input::endFrame();           // clear single-frame state from last frame
+    Input::endFrame();
     glfwWaitEventsTimeout(0.016);
 }
 
 void Window::swapBuffers() {
-    // No-op until a graphics context is attached
+    glfwSwapBuffers(m_impl->handle);
 }
 
 void Window::run(const std::function<bool()>& onFrame) {
