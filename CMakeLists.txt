@@ -4,10 +4,10 @@ project(chisel VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
  
-# ── Dependencies ──────────────────────────────────────────────────────────────
+# Dependencies 
 find_package(glfw3 3.3 REQUIRED)
  
-# ── Library target ────────────────────────────────────────────────────────────
+# Library target
 add_library(chisel STATIC
     src/window.cpp
 )
@@ -20,7 +20,7 @@ target_link_libraries(chisel
     PRIVATE glfw
 )
  
-# ── Examples ──────────────────────────────────────────────────────────────────
+# Examples
 option(CHISEL_BUILD_EXAMPLES "Build example programs" ON)
  
 if(CHISEL_BUILD_EXAMPLES)

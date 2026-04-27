@@ -17,6 +17,9 @@ _deps/
 *.exe
 *.out
 
+# Docs (generated — run doxygen to rebuild)
+docs/generated/
+
 # IDE — VSCode
 .vscode/
 

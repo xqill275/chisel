@@ -1,0 +1,29 @@
+# Chisel Engine — Doxyfile
+# Generate docs with: doxygen docs/Doxyfile
+
+PROJECT_NAME           = "Chisel"
+PROJECT_NUMBER         = 0.1.0
+PROJECT_BRIEF          = "A lightweight, code-only 2D game engine"
+
+# Output
+OUTPUT_DIRECTORY       = docs/generated
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+
+# What to document
+INPUT                  = include/
+RECURSIVE              = YES
+FILE_PATTERNS          = *.h
+
+# Only document things with Doxygen comments
+EXTRACT_ALL            = NO
+EXTRACT_PRIVATE        = NO
+
+# Nicer output
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+
+# Hide Doxygen's own footer noise
+QUIET                  = YES
+WARNINGS               = YES

@@ -5,7 +5,7 @@
 
 namespace chisel {
 
-// ── PIMPL definition ──────────────────────────────────────────────────────────
+// IMPL definition
 
 struct Window::Impl {
     GLFWwindow* handle = nullptr;
@@ -33,7 +33,7 @@ struct Window::Impl {
 
         glfwSetFramebufferSizeCallback(handle,
             [](GLFWwindow*, int, int) {
-                // Will forward to user callbacks in a later chapter
+                // TODO: Will forward to user callbacks in a later chapter
             });
 
         glfwShowWindow(handle);
@@ -47,7 +47,7 @@ struct Window::Impl {
     }
 };
 
-// ── Window public API ─────────────────────────────────────────────────────────
+// Window API
 
 Window::Window(const WindowConfig& cfg)
     : m_impl(new Impl(cfg))
@@ -81,7 +81,7 @@ void Window::pollEvents() {
 }
 
 void Window::swapBuffers() {
-    // No-op until a graphics context is attached
+    // TODO!: No-op until a graphics context is attached
 }
 
 void Window::run(const std::function<bool()>& onFrame) {
