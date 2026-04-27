@@ -1,0 +1,39 @@
+# Build directories
+build/
+out/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# Compiled output
+*.a
+*.so
+*.dll
+*.exe
+*.out
+
+# IDE — VSCode
+.vscode/
+
+# IDE — CLion
+.idea/
+cmake-build-*/
+
+# IDE — Visual Studio
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# OS
+.DS_Store
+Thumbs.db
